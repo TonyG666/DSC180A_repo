@@ -8,7 +8,7 @@ import plotly.express as px
 # curl -o afdc_full.json "https://developer.nrel.gov/api/alt-fuel-stations/v1.json?api_key=ygp1Tgcbv8Set3iJJz3Fs87Vns7mUaqM2JH05hhD"
 
 # convert full afdc data into a dataframe
-with open('afdc_full.json', 'r') as f:
+with open('data/afdc_full.json', 'r') as f:
     afdc = json.load(f)
 fs = afdc.get('fuel_stations', [])
 afdc_df = pd.DataFrame(fs)
