@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 
 
 # get the dataset
-dmv_df = pd.read_csv('dmv.csv')
+dmv_df = pd.read_csv('data/dmv.csv')
 print(dmv_df.head())
 print(len(dmv_df))
 
