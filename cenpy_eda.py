@@ -23,12 +23,12 @@ data.columns = ['Total Population', 'zip']
 # print(len(set(data['zip'].unique())))
 
 # Save to a CSV
-data.to_csv("acs_5y_2022.csv", index=False)
+data.to_csv("data/acs_5y_2022.csv", index=False)
 print("acs_5y_2022.csv created!")
 
 
 # get afdc
-with open('afdc_full.json', 'r') as f:
+with open('data/afdc_full.json', 'r') as f:
     afdc = json.load(f)
 fs = afdc.get('fuel_stations', [])
 afdc_df = pd.DataFrame(fs)
@@ -51,7 +51,7 @@ print(sd_acs_clear.head())
 
 
 # start plotting
-zip_geo = gpd.read_file("Zipcodes.geojson")
+zip_geo = gpd.read_file("data/Zipcodes.geojson")
 print(zip_geo.head())
 
 zip_geo['zip'] = zip_geo['zip'].astype(str)
