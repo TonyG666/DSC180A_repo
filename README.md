@@ -19,3 +19,9 @@ to run sdge_to_mystation.py, in command line, type
 ```
 python sdge_to_mystation.py
 ```
+
+to run statsmodel.py, in command line, type
+```
+python statsmodel.py
+```
+
