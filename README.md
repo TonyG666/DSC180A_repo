@@ -1,6 +1,7 @@
 # DSC180A
 
 Here are the steps to reproduce my results.
+
 1:
 cd to a directory you like. (e.g. run "cd desktop")
 
