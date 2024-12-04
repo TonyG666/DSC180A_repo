@@ -1,27 +1,34 @@
 # DSC180A
 
-to run afdc_eda.py, in command line, type
+Here are the steps to reproduce my results.
+1:
+cd to a directory you like. (e.g. run "cd desktop")
+
+2:
+```
+git clone https://github.com/TonyG666/DSC180A_repo
+```
+
+3:
+```
+cd DSC180A_repo
+```
+
+4
+```
+conda env create -f env.yml
+```
+
+5
+```
+conda activate my_env
+```
+
+6
 ```
 python afdc_eda.py
-```
-
-to run cenpy_eda.py, in command line, type
-```
 python cenpy_eda.py
-```
-
-to run dmv_eda.py, in command line, type
-```
 python dmv_eda.py
-```
-
-to run sdge_to_mystation.py, in command line, type
-```
+python model.py
 python sdge_to_mystation.py
 ```
-
-to run statsmodel.py, in command line, type
-```
-python statsmodel.py
-```
-
