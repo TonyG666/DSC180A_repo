@@ -1,45 +1,35 @@
+#Electric Vehicle Charging Stations Analysis
+
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
 import geopandas as geo
 import plotly.express as px
 
-# command lines to get the full afdc dataset
+# retrieve the full AFDC dataset via a terminal command
 # curl -o afdc_full.json "https://developer.nrel.gov/api/alt-fuel-stations/v1.json?api_key=ygp1Tgcbv8Set3iJJz3Fs87Vns7mUaqM2JH05hhD"
 
-# convert full afdc data into a dataframe
+# load full afdc data into a dataframe
 with open('data/afdc_full.json', 'r') as f:
     afdc = json.load(f)
 fs = afdc.get('fuel_stations', [])
 afdc_df = pd.DataFrame(fs)
 print(afdc_df.head())
 
-# # get all zip codes in which there are in SDGE service territory
-# sdge_terri = pd.read_excel('SDGE_zip.xlsx')
-# print(sdge_terri.head())
-# uni_zip = sdge_terri['ZIP_CODE'].unique()
-# zip_str = ','.join(map(str, uni_zip))
-# print(zip_str)
-
-# use the coma-separated zip codes to get the count of total fuel stations in SDGE service territory
-# https://developer.nrel.gov/api/alt-fuel-stations/v1.json?&api_key=ygp1Tgcbv8Set3iJJz3Fs87Vns7mUaqM2JH05hhD&fuel_type=ELEC&zip=91901,91902,91905,91906,91910,91911,91912,91913,91914,91915,91916,91917,91931,91932,91934,91935,91941,91942,91945,91948,91950,91962,91963,91970,91977,91978,91980,92003,92004,92007,92008,92009,92010,92011,92014,92019,92020,92021,92023,92024,92025,92026,92027,92028,92029,92032,92036,92037,92040,92041,92050,92054,92055,92056,92057,92058,92059,92060,92061,92062,92064,92065,92066,92067,92068,92069,92070,92071,92072,92075,92078,92079,92081,92082,92083,92084,92085,92086,92091,92092,92093,92096,92101,92102,92103,92104,92105,92106,92107,92108,92109,92110,92111,92112,92113,92114,92115,92116,92117,92118,92119,92120,92121,92122,92123,92124,92126,92127,92128,92129,92130,92131,92132,92133,92134,92135,92136,92139,92145,92150,92152,92154,92155,92158,92161,92173,92179,92182,92199,92536,92624,92629,92649,92651,92653,92654,92656,92672,92673,92674,92675,92676,92677,92679,92688,92690,92691,92692,92693,92694,92697,95126
-# total = 1728
-# It seems difficult to get the number of stations that are SDGE-owned because there are other provides of G&E, and they are not specified in afdc dataset.
-
-
 
 # Data EDA
 
-
-# stations in san diego city
+# Filter data to analyze electric vehicle charging stations in San Diego City
 sd = afdc_df[(afdc_df['city'] == 'San Diego')]
 print(len(sd))
+
+# Filter further by electric stations and select relevant columns
 sd_data = afdc_df[(afdc_df['city'] == 'San Diego') & (afdc_df['fuel_type_code'] == 'ELEC')][['city', 'open_date']]
 print(sd_data.head())
 print(len(sd_data))
 
 
-# time series plot
+# Time series plot: Number of Electric Stations Opened in San Diego City by Year
 sd_data['open_date'] = pd.to_datetime(sd_data['open_date'])
 sd_data['year'] = sd_data['open_date'].dt.year
 stations_each_year = sd_data.groupby('year').size()
@@ -55,22 +45,25 @@ plt.grid(True)
 plt.show()
 
 
-# geospatial plot
+# Geospatial analysis of electric stations by state over time
 afdc_by_state = afdc_df[afdc_df['fuel_type_code'] == 'ELEC'][['state', 'open_date']]
 afdc_by_state['open_date'] = pd.to_datetime(afdc_by_state['open_date'], errors='coerce')
 afdc_by_state['year'] = afdc_by_state['open_date'].dt.year
 afdc_by_state = afdc_by_state[afdc_by_state['year'] <= 2024]
 
+# Load US states GeoJSON data
 with open("data/us-states.json") as f:
     us_states = json.load(f)
 
+# Aggregate data by year and state
 state_counts = afdc_by_state.groupby(['year', 'state']).size().reset_index(name='count')
 
+# Normalize GeoJSON data for compatibility with the dataset
 geo_data = pd.json_normalize(us_states['features'])
 geo_data = geo_data[['properties.name', 'id']]
 geo_data.columns = ['state_name', 'state_id']
 
-# Create choropleth map using plotly
+# Create choropleth map using plotly to visualize the data
 fig = px.choropleth(
     state_counts,
     geojson=us_states,
@@ -89,5 +82,14 @@ fig.update_layout(
     transition_duration=500
 )
 
-# Show the plot
+# Display the interactive map
 fig.show()
+
+# Documentation:
+# 1. The dataset is loaded from a JSON file retrieved using the AFDC API.
+# 2. Initial filtering focuses on electric vehicle charging stations in San Diego City.
+# 3. A time series analysis shows the number of electric stations opened yearly in San Diego City.
+# 4. Data is grouped by year for visualization in a line plot.
+# 5. Geospatial data is used to analyze trends across US states with a focus on electric charging stations.
+# 6. The plotly choropleth map visualizes the count of stations by state for each year using an animated frame.
+# 7. GeoJSON data is normalized for compatibility with the AFDC dataset to enable accurate state-level mapping
